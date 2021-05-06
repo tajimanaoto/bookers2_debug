@@ -18,7 +18,7 @@ class User < ApplicationRecord
 
   validates :name, uniqueness: true, length: {maximum: 20, minimum: 2}
   validates :introduction,  uniqueness: true,  length: { maximum: 50 }
-  cd
+  
   def follow(user_id)
     relationships.create(followed_id: user_id)
   end
@@ -30,4 +30,17 @@ class User < ApplicationRecord
   def following?(user)
     followings.include?(user)
   end
+  
+  def self.search_for(content, method)
+    if method == 'perfect'
+      User.where(name: content)
+    elsif method == 'forward'
+      User.where('name LIKE ?', content + '%')
+    elsif method == 'backward'
+      User.where('name LIKE ?', '%' + content)
+    else
+      User.where('name LIKE ?', '%' + content + '%')
+    end
+  end
+  
 end
